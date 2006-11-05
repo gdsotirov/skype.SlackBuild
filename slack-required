@@ -1,0 +1,9 @@
+aaa_elflibs
+aaa_elflibs | gcc
+cxxlibs
+cxxlibs | gcc-g++
+gcc
+glibc
+glibc | glibc-solibs
+qt
+x11
