@@ -7,7 +7,7 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=1.4.0.74
+VERSION=1.4.0.94
 ARCH=i686
 BUILD=1
 
@@ -24,7 +24,7 @@ mkdir $PKG
 SRC=$TMP/${NAME}_static-$VERSION
 rm -rf $SRC
 cd $TMP
-tar -jxvf $CWD/$NAME-$VERSION-static.tar.bz2
+tar -jxvf $CWD/${NAME}_static-${VERSION}.tar.bz2
 
 # Install files
 install -d -m 755 $PKG/usr/bin
