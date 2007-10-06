@@ -7,7 +7,7 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=1.4.0.99
+VERSION=1.4.0.118
 ARCH=i686
 BUILD=1
 
@@ -27,26 +27,32 @@ cd $TMP
 tar -jxvf $CWD/${NAME}_static-${VERSION}.tar.bz2
 
 # Install files
-install -d -m 755 $PKG/usr/bin
+install -m 755 -d $PKG/etc/dbus-1/system.d
+install -m 644 $SRC/skype.conf $PKG/etc/dbus-1/system.d
+install -m 755 -d $PKG/usr/bin
 install -m 755 $SRC/skype $PKG/usr/bin
 install -d -m 755 $PKG/usr/share/$NAME
-install -d -m 755 $PKG/usr/share/$NAME/sounds
-install -m 644 $SRC/sounds/* $PKG/usr/share/$NAME/sounds
+for dir in avatars icons lang sounds; do
+  install -m 755 -d $PKG/usr/share/$NAME/$dir
+  install -m 644 $SRC/$dir/* $PKG/usr/share/$NAME/$dir
+done
 
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
 
 # Configure environment
-install -d -m 755 $PKG/usr/share/applications
+install -m 755 -d $PKG/usr/share/applications
 install -m 644 $SRC/skype.desktop $PKG/usr/share/applications/$NAME.desktop
-install -d -m 755 $PKG/usr/share/pixmaps
+install -m 755 -d $PKG/usr/share/icons
+install -m 644 $SRC/icons/SkypeBlue_32x32.png $PKG/usr/share/icons/$NAME.png
+install -m 755 -d $PKG/usr/share/pixmaps
 install -m 644 $SRC/icons/SkypeBlue_32x32.png $PKG/usr/share/pixmaps/$NAME.png
 
 # Prepre package
 bin_perms $PKG
-install -d -m 755 $PKG/install
+install -m 755 -d $PKG/install
 install -m 644 $CWD/slack-desc $PKG/install
 install -m 644 $CWD/slack-required $PKG/install
-install -d -m 755 $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 755 -d $PKG/usr/src/slackbuilds/$NAME-$VERSION
 install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION
 install -m 644 $CWD/slack-desc $PKG/usr/src/slackbuilds/$NAME-$VERSION
 install -m 644 $CWD/slack-required $PKG/usr/src/slackbuilds/$NAME-$VERSION
