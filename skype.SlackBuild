@@ -7,7 +7,7 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=2.0.0.27
+VERSION=2.0.0.43
 ARCH=i686
 BUILD=1
 
