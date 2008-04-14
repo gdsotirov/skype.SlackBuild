@@ -7,9 +7,9 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=2.0.0.43
+VERSION=2.0.0.68
 ARCH=i686
-BUILD=1
+BUILD=2
 
 CWD=${CWD:-`pwd`}
 TMP=${TMP:-/tmp}
@@ -25,6 +25,7 @@ SRC=$TMP/${NAME}_static-$VERSION
 rm -rf $SRC
 cd $TMP
 tar -jxvf $CWD/${NAME}_static-${VERSION}.tar.bz2
+( cd $SRC; fix_source )
 
 # Install files
 install -m 755 -d $PKG/etc/dbus-1/system.d
