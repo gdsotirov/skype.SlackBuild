@@ -7,9 +7,9 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=2.0.0.68
+VERSION=2.0.0.72
 ARCH=i686
-BUILD=2
+BUILD=1
 
 CWD=${CWD:-`pwd`}
 TMP=${TMP:-/tmp}
