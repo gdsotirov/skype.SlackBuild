@@ -7,7 +7,8 @@
 . ../slack-package.conf
 
 NAME=skype
-VERSION=2.0.0.72
+TITLE=Skype
+VERSION=2.1.0.47
 ARCH=i686
 BUILD=1
 
@@ -21,49 +22,51 @@ PKG=$TMP/package-$NAME
 rm -rf $PKG
 mkdir $PKG
 
-SRC=$TMP/${NAME}_static-$VERSION
+SRC=$TMP/${NAME}-$VERSION
 rm -rf $SRC
 cd $TMP
-tar -jxvf $CWD/${NAME}_static-${VERSION}.tar.bz2
-( cd $SRC; fix_source )
+tar -jxvf $CWD/$NAME-$VERSION.tar.bz2
 
 # Install files
-install -m 755 -d $PKG/etc/dbus-1/system.d
-install -m 644 $SRC/skype.conf $PKG/etc/dbus-1/system.d
-install -m 755 -d $PKG/usr/bin
-install -m 755 $SRC/skype $PKG/usr/bin
-install -d -m 755 $PKG/usr/share/$NAME
-for dir in avatars icons lang sounds; do
-  install -m 755 -d $PKG/usr/share/$NAME/$dir
-  install -m 644 $SRC/$dir/* $PKG/usr/share/$NAME/$dir
+install -d -m 755 $PKG/etc
+install -m 644 $SRC/${NAME}.conf $PKG/etc/${NAME}.conf
+install -d -m 755 $PKG/usr/bin
+install -m 755 $SRC/$NAME $PKG/usr/bin/$NAME
+for SDIR in "avatars" "lang" "sounds"; do
+  install -d -m 755 $PKG/usr/share/$NAME/$SDIR
+  install -m 644 $SRC/$SDIR/* $PKG/usr/share/$NAME/$SDIR
 done
 
 ( cd $SRC; create_docs $PKG $NAME-$VERSION )
+mv $PKG/usr/doc/$NAME-$VERSION/LICENSE $PKG/usr/doc/$NAME-$VERSION/COPYING
 
 # Configure environment
-install -m 755 -d $PKG/usr/share/applications
-install -m 644 $SRC/skype.desktop $PKG/usr/share/applications/$NAME.desktop
-install -m 755 -d $PKG/usr/share/icons
-install -m 644 $SRC/icons/SkypeBlue_32x32.png $PKG/usr/share/icons/$NAME.png
-install -m 755 -d $PKG/usr/share/pixmaps
-install -m 644 $SRC/icons/SkypeBlue_32x32.png $PKG/usr/share/pixmaps/$NAME.png
+install -d -m 755 $PKG/usr/share/applications
+install -m 644 $SRC/${NAME}.desktop $PKG/usr/share/applications/${NAME}.desktop
+for IDIR in "icons" "pixmaps"; do
+  install -d -m 755 $PKG/usr/share/$IDIR
+  install -m 644 $SRC/icons/${TITLE}Blue_32x32.png $PKG/usr/share/${IDIR}/${NAME}.png
+done
 
-# Prepre package
+# Prepre packageslack-desc 
 bin_perms $PKG
-install -m 755 -d $PKG/install
-install -m 644 $CWD/slack-desc $PKG/install
-install -m 644 $CWD/slack-required $PKG/install
-install -m 755 -d $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-desc $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-required $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -d -m 755 $PKG/install
+install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
+install -m 644 $CWD/slack-required $PKG/install/slack-required
+install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
+
+install -d -m 755 $PKG/usr/src/slackbuilds/$NAME-$VERSION
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
+install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
+install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
 
 # Build package
 cd $PKG
 PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
-makepkg -l y -c n $PKG_DIR/$PKGNAME.tgz
+makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 cat $CWD/slack-desc > $PKG_DIR/$PKGNAME.txt
-md5sum $PKG_DIR/$PKGNAME.tgz > $PKG_DIR/$PKGNAME.tgz.md5
+md5sum $PKG_DIR/$PKGNAME.txz > $PKG_DIR/$PKGNAME.txz.md5
 
 if [ "$1" == "--cleanup" ]; then
   rm -rf $SRC
