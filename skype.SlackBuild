@@ -19,14 +19,14 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: skype.SlackBuild,v 1.12 2012/02/26 20:24:00 gsotirov Exp $
+# $Id: skype.SlackBuild,v 1.13 2012/07/08 15:32:13 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=skype
 TITLE=Skype
-VERSION=2.2.0.35
+VERSION=4.0.0.7
 BUILD=${BUILD:-1}
 
 CWD=${CWD:-`pwd`}
