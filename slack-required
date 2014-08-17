@@ -1,3 +1,4 @@
+GConf >= 3.2.6
 alsa-lib >= 1.0.27.2
 bzip2 >= 1.0.6
 cxxlibs >= 6.0.18 | gcc-g++ >= 4.8.2
