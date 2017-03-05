@@ -1,7 +1,7 @@
 #!/bin/sh
 #
-# Slackware build script for Skype
-# Copyright (C) 2006-2014 Georgi D. Sotirov <gdsotirov@dir.bg>
+# Slackware build script for Skype for Linux
+# Copyright (C) 2006-2017 Georgi D. Sotirov <gdsotirov@dir.bg>
 #
 # This program is free software; you can redistribute it and/or
 # modify it under the terms of the GNU General Public License
@@ -19,51 +19,43 @@
 #
 # Visit SlackPack at http://sotirov-bg.net/slackpack/
 #
-# $Id: skype.SlackBuild,v 1.16 2014/08/17 07:29:12 gsotirov Exp $
+# $Id: skype.SlackBuild,v 1.17 2017/03/05 17:59:55 gsotirov Exp $
 #
 
 . ../../slack-package.conf
 
 NAME=skype
-TITLE=Skype
-VERSION=4.3.0.37
+VERSION=5.0.0.5
 BUILD=${BUILD:-1}
 
 CWD=${CWD:-`pwd`}
 TMP=${TMP:-/tmp}
+
+function unrpm() {
+  rpm2cpio < $1 | cpio --extract --make-directories --unconditional --preserve-modification-time
+}
+
 if [ ! -d $TMP ]; then
   mkdir -p $TMP
 fi
 
-PKG=$TMP/package-$NAME
-rm -rf $PKG
-mkdir $PKG
+PKG=$TMP/package-${NAME}
+if [ -e $PKG -a -d $PKG ]; then
+  echo "Package creation directory '$PKG' already exists! Please, move it or remove it."
+  exit 2
+fi
+mkdir -p $PKG
 
-SRC=$TMP/${NAME}-$VERSION
-rm -rf $SRC
-cd $TMP
-tar -xvf $CWD/$NAME-$VERSION.tar.bz2 || exit 1
+# Extract source RPM archive
+cd $PKG
+unrpm $CWD/${NAME}forlinux-64.rpm
 
-# Install files
-install -d -m 755 $PKG/etc
-install -m 644 $SRC/${NAME}.conf $PKG/etc/${NAME}.conf
-install -d -m 755 $PKG/usr/bin
-install -m 755 $SRC/$NAME $PKG/usr/bin/$NAME
-for SDIR in "avatars" "lang" "sounds"; do
-  install -d -m 755 $PKG/usr/share/$NAME/$SDIR
-  install -m 644 $SRC/$SDIR/* $PKG/usr/share/$NAME/$SDIR
-done
-
-( cd $SRC; create_docs $PKG $NAME-$VERSION )
-mv $PKG/usr/doc/$NAME-$VERSION/LICENSE $PKG/usr/doc/$NAME-$VERSION/COPYING
-
-# Configure environment
-install -d -m 755 $PKG/usr/share/applications
-install -m 644 $SRC/${NAME}.desktop $PKG/usr/share/applications/${NAME}.desktop
-for IDIR in "icons" "pixmaps"; do
-  install -d -m 755 $PKG/usr/share/$IDIR
-  install -m 644 $SRC/icons/${TITLE}Blue_32x32.png $PKG/usr/share/${IDIR}/${NAME}.png
-done
+# Link skype to skypetolinux executable
+( cd $PKG/usr/bin; ln -s ${NAME}forlinux ${NAME} )
+# Move documents in the right place
+install -d -m 755 $PKG/usr/doc
+( cd $PKG/usr; mv share/doc/${NAME}forlinux doc/${NAME}-${VERSION}; rmdir share/doc )
+( cd $PKG/usr/doc/${NAME}-${VERSION}; mv copyright COPYING )
 
 # Prepre packageslack-desc 
 bin_perms $PKG
@@ -72,15 +64,15 @@ install -m 644 $CWD/slack-desc     $PKG/install/slack-desc
 install -m 644 $CWD/slack-required $PKG/install/slack-required
 install -m 644 $CWD/slack-suggests $PKG/install/slack-suggests
 
-install -d -m 755 $PKG/usr/src/slackbuilds/$NAME-$VERSION
-install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-desc
-install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-required
-install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/$NAME-$VERSION/slack-suggests
-install -m 644 $CWD/$NAME.SlackBuild $PKG/usr/src/slackbuilds/$NAME-$VERSION/$NAME.SlackBuild
+install -d -m 755 $PKG/usr/src/slackbuilds/${NAME}-$VERSION
+install -m 644 $CWD/slack-desc       $PKG/usr/src/slackbuilds/${NAME}-$VERSION/slack-desc
+install -m 644 $CWD/slack-required   $PKG/usr/src/slackbuilds/${NAME}-$VERSION/slack-required
+install -m 644 $CWD/slack-suggests   $PKG/usr/src/slackbuilds/${NAME}-$VERSION/slack-suggests
+install -m 644 $CWD/${NAME}.SlackBuild $PKG/usr/src/slackbuilds/${NAME}-$VERSION/${NAME}.SlackBuild
 
 # Build package
 cd $PKG
-PKGNAME=$NAME-$VERSION-$ARCH-$BUILD$MYIN
+PKGNAME=${NAME}-$VERSION-$ARCH-$BUILD$MYIN
 makepkg -l y -c n $PKG_DIR/$PKGNAME.txz
 cat $CWD/slack-desc > $PKG_DIR/$PKGNAME.txt
 md5sum $PKG_DIR/$PKGNAME.txz > $PKG_DIR/$PKGNAME.txz.md5
